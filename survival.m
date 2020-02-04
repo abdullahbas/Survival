@@ -168,10 +168,11 @@ end
 cums=cumSurv(2:end);
 ind2=find(indicesUn==1);
 ind1=find(indicesCen==1);
-
+CIup=0;
+CIlow=0;
+ste(isnan(ste))=ste(diff(isnan(ste))>0);
 CIup=cums()+1*value{3}*ste();
 CIlow=cums()+(-1*value{3})*ste();
-
 CIup=(CIup>0).* CIup;
 CIlow=(CIlow>0).*CIlow;
 
@@ -179,14 +180,21 @@ sh = stairs(CIup);
 x = [sh.XData(1),repelem(sh.XData(2:end),2)];
 y = [repelem(sh.YData(1:end-1),2),sh.YData(end)];
 sh2=stairs(CIlow);
+x2=[sh2.XData(1),repelem(sh2.XData(2:end),2)];
 y2 = [repelem(sh2.YData(1:end-1),2),sh2.YData(end)];
+x(isnan(x))=x(diff(isnan(x))>0);
+y(isnan(y))=y(diff(isnan(y))>0);
+x2(isnan(x2))=x2(diff(isnan(x2))>0);
+
+y2(isnan(y2))=y2(diff(isnan(y2))>0);
 
 stairs(0:length(cumSurv(1:end))-1,cumSurv(1:end))
 xticks(1:length(cumSurv(1:end)))
 xticklabels(abs(month))
 hold on
+
 patch([x,fliplr(x)], [y,fliplr(y2)],...
-   [rand rand rand],'FaceAlpha',0.3, 'EdgeColor','None')
+   [rand rand rand],'FaceAlpha',0.3,'EdgeColor','None')
 hold on
 scatter(ind2,cumSurv(ind2),'filled','b')
 hold on
@@ -196,6 +204,7 @@ xlabel(value{4}),ylabel(value{5})
 tab{i}=[month(indicesUn)' cums(indicesUn)' ste(indicesUn)'  CIlow(indicesUn)' CIup(indicesUn)'];
 
 end
+hold off
 legend('SURV','Confidence Interval','Uncensored','Censored')
 
 end
